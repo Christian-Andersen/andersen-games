@@ -1,0 +1,30 @@
+[[repos]]
+repo = "local"
+
+[[repos.hooks]]
+id = "ruff-check"
+name = "ruff-check"
+language = "system"
+pass_filenames = false
+entry = "uv run -- ruff check --fix"
+
+[[repos.hooks]]
+id = "ruff-format"
+name = "ruff-format"
+language = "system"
+pass_filenames = false
+entry = "uv run -- ruff format"
+
+[[repos.hooks]]
+id = "ty-check"
+name = "ty-check"
+language = "system"
+pass_filenames = false
+entry = "uv run -- ty check"
+
+[[repos.hooks]]
+id = "audit"
+name = "audit"
+language = "system"
+pass_filenames = false
+entry = "uv audit"

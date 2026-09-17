@@ -4,9 +4,12 @@ version = "0.1.0"
 description = "ABS regional data ETL for game scoring"
 
 requires-python = ">=3.14"
-dependencies = [
-    "httpx>=0.28.1",
-    "polars[calamine]>=1.37.1",
+dependencies = ["httpx>=0.28.1", "polars[calamine]>=1.37.1"]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.3.0",
+  "ty>=0.0.1",
 ]
 
 [tool.ruff]
@@ -15,10 +18,11 @@ line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "COM812",  # missing-trailing-comma
-  "T20",  # flake8-print
-  "ERA",  # eradicate
-  "D",  # docstrings
+  "COM812", # missing-trailing-comma
+  "T20",    # flake8-print
+  "ERA",    # eradicate
+  "D",      # docstrings
+  "CPY",    # copyright
 ]
 
 [tool.ruff.lint.pydocstyle]

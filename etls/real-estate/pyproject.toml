@@ -5,16 +5,15 @@ description = "Domain.com.au sold property scraper ETL"
 
 requires-python = ">=3.14"
 dependencies = [
-    "pandas>=3.0.0",
-    "selenium>=4.0.0",
-    "scikit-learn>=1.0.0",
+  "pandas>=3.0.0",
+  "selenium>=4.0.0",
+  "scikit-learn>=1.0.0",
 ]
 
 [dependency-groups]
 dev = [
-    "prek>=0.3.3",
-    "ruff>=0.3.0",
-    "ty>=0.0.1",
+  "ruff>=0.3.0",
+  "ty>=0.0.1",
 ]
 
 [tool.ruff]
@@ -23,10 +22,11 @@ line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "COM812",  # missing-trailing-comma
-  "T20",  # flake8-print
-  "ERA",  # eradicate
-  "D",  # docstrings
+  "COM812", # missing-trailing-comma
+  "T20",    # flake8-print
+  "ERA",    # eradicate
+  "D",      # docstrings
+  "CPY",    # copyright
 ]
 
 [tool.ruff.lint.pydocstyle]

@@ -1,10 +1,14 @@
-mod frontend 'frontend/justfile'
-mod etls 'etls/justfile'
-
 alias c := check
 alias d := dev
 
-default: build
+[private]
+default:
+    @just --list
+
+setup:
+    cd ./frontend && npm install --silent
+    cd ./etls/absgame/ && uv sync --locked
+    cd ./etls/real-estate/ && uv sync --locked
 
 build:
     just frontend build

@@ -1,7 +1,0 @@
-[project]
-name = "etls"
-version = "0.1.0"
-private = true
-
-[tool.uv.workspace]
-members = ["absgame", "real-estate"]

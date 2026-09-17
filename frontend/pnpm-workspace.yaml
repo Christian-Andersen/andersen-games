@@ -1,6 +1,0 @@
-packages:
-  - 'shared'
-allowBuilds:
-  esbuild: true
-onlyBuiltDependencies:
-  - esbuild
