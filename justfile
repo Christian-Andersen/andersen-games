@@ -1,6 +1,5 @@
 alias c := check
 alias d := dev
-alias ci := continuous_integration
 
 [private]
 default:
@@ -23,5 +22,5 @@ dev:
 audit:
     prek run --all-files audit
 
-continuous_integration:
+ci:
     prek run --all-files --stage manual
