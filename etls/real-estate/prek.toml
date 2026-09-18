@@ -27,4 +27,5 @@ id = "audit"
 name = "audit"
 language = "system"
 pass_filenames = false
+stages = ["manual"]
 entry = "uv audit"

@@ -1,5 +1,6 @@
 alias c := check
 alias d := dev
+alias ci := continuous_integration
 
 [private]
 default:
@@ -18,3 +19,9 @@ check:
 
 dev:
     just frontend dev
+
+audit:
+    prek run --all-files audit
+
+continuous_integration:
+    prek run --all-files --stage manual
