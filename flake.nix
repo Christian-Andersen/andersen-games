@@ -20,6 +20,7 @@
         uv
         vtsls
         vue-language-server
+        python314
       ];
     };
   };
