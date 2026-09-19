@@ -22,5 +22,5 @@ dev:
 audit:
     prek run --all-files audit
 
-ci:
+ci: setup
     prek run --all-files --stage manual
