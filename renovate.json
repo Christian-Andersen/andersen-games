@@ -2,5 +2,27 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "nix": {
     "enabled": true
-  }
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 5am on the first day of the month"],
+    "recreateWhen": "always"
+  },
+  "packageRules": [
+    {
+      "description": "Only refresh flake.lock via lockFileMaintenance; npm and uv lockfiles are already kept in sync by their package managers",
+      "matchManagers": ["npm", "uv"],
+      "lockFileMaintenance": {
+        "enabled": false
+      }
+    },
+    {
+      "description": "Group Nix flake input (digest) updates into a single PR on the lockfile maintenance cadence",
+      "matchManagers": ["nix"],
+      "matchUpdateTypes": ["digest"],
+      "groupName": "Nix flake inputs",
+      "schedule": ["before 5am on the first day of the month"],
+      "recreateWhen": "always"
+    }
+  ]
 }
