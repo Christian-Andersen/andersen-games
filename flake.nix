@@ -7,7 +7,7 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
-      config.permittedInsecurePackages = ["pnpm-10.34.0"];
+      config.permittedInsecurePackages = ["pnpm-10.34.5"];
     };
   in {
     devShells.${system}.default = pkgs.mkShell {
