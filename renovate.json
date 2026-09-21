@@ -8,6 +8,9 @@
     "schedule": ["before 5am on the first day of the month"],
     "recreateWhen": "always"
   },
+  "pyenv": {
+    "enabled": false
+  },
   "packageRules": [
     {
       "description": "Only refresh flake.lock via lockFileMaintenance; npm and uv lockfiles are already kept in sync by their package managers",
@@ -23,6 +26,19 @@
       "groupName": "Nix flake inputs",
       "schedule": ["before 5am on the first day of the month"],
       "recreateWhen": "always"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track the CPython version pinned by uv in .python-version files (with the +gil variant marker)",
+      "fileMatch": ["(^|/)\\.python-version$"],
+      "matchStrings": ["^(?<currentValue>\\d+\\.\\d+(?:\\.\\d+)?)(?:\\+gil)?$"],
+      "depNameTemplate": "python",
+      "packageNameTemplate": "python/cpython",
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "pep440",
+      "autoReplaceStringTemplate": "{{newValue}}+gil"
     }
   ]
 }
