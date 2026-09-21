@@ -39,6 +39,15 @@
       "datasourceTemplate": "github-tags",
       "versioningTemplate": "pep440",
       "autoReplaceStringTemplate": "{{newValue}}+gil"
+    },
+    {
+      "customType": "regex",
+      "description": "Track the pnpm version pinned in flake.nix permittedInsecurePackages",
+      "fileMatch": ["(^|/)flake\\.nix$"],
+      "matchStrings": ["\"(?<depName>pnpm)-(?<currentValue>\\d+\\.\\d+\\.\\d+)\""],
+      "datasourceTemplate": "npm",
+      "versioningTemplate": "npm",
+      "autoReplaceStringTemplate": "\"{{depName}}-{{newValue}}\""
     }
   ]
 }
