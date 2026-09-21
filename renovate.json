@@ -48,6 +48,15 @@
       "datasourceTemplate": "npm",
       "versioningTemplate": "npm",
       "autoReplaceStringTemplate": "\"{{depName}}-{{newValue}}\""
+    },
+    {
+      "customType": "regex",
+      "description": "Keep the Biome schema URL version in biome.json in sync with the @biomejs/biome package",
+      "fileMatch": ["(^|/)biome\\.json$"],
+      "matchStrings": ["biomejs\\.dev/schemas/(?<currentValue>\\d+\\.\\d+\\.\\d+)/schema\\.json"],
+      "depNameTemplate": "@biomejs/biome",
+      "datasourceTemplate": "npm",
+      "versioningTemplate": "npm"
     }
   ]
 }
