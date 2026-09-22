@@ -26,6 +26,11 @@
       "groupName": "Nix flake inputs",
       "schedule": ["before 5am on the first day of the month"],
       "recreateWhen": "always"
+    },
+    {
+      "description": "Hold TypeScript at 6.x: TS 7 is the native (tsgo) compiler and drops the JS compiler API vue-tsc depends on (see vuejs/language-tools#5381). Remove once vue-tsc supports TS 7.",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<7"
     }
   ],
   "customManagers": [
