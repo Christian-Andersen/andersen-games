@@ -35,5 +35,4 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          npx wrangler pages project create ${{ github.event.repository.name }} --production-branch=main || true
           npx wrangler pages deploy frontend/dist --project-name=${{ github.event.repository.name }}
