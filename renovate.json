@@ -2,6 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": "Monorepo: two uv-managed Python services (etls/absgame, etls/real-estate) and one npm frontend (frontend). The uv lockfiles already track their own resolution, and the frontend lockfile is kept in sync by npm, so lockFileMaintenance is scoped to Nix only.",
   "extends": ["config:recommended", ":disableDependencyDashboard"],
+  "semanticCommits": "enabled",
   "nix": {
     "enabled": true
   },
