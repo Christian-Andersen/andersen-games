@@ -30,7 +30,7 @@ for book_name in info:
     )
     dfs = {k: v for k, v in dfs.items() if k.startswith("Table ")}
     print(f"{book_name}: {list(dfs.keys())}")
-    for name, frame in dfs.items():
+    for name, frame in list(dfs.items()):
         cols = frame.columns
         dfs[name] = frame.with_columns(
             [
