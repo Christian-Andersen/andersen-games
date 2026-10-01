@@ -9,7 +9,7 @@ from typing import Any
 
 
 def add_column(group: dict[str, Any], header: str) -> str:
-    """Returns '' if the key 'header' does not excist in dict 'group'."""
+    """Returns '' if the key 'header' does not exist in dict 'group'."""
     val = group.get(header, "")
     return str(val) if val is not None else ""
 
