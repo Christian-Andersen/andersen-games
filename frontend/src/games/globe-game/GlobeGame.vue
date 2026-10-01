@@ -190,8 +190,10 @@ onUnmounted(() => {
 	cancelAnimationFrame(animationId);
 	window.removeEventListener("resize", onWindowResize);
 	if (timerInterval.value) clearInterval(timerInterval.value);
+	controls?.dispose();
 	if (renderer) {
 		renderer.dispose();
+		renderer.domElement.remove();
 	}
 });
 
