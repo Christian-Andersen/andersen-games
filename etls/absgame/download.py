@@ -5,8 +5,6 @@ import httpx
 
 URL = "https://www.abs.gov.au/methodologies/data-region-methodology/2011-25/All-data-by-region-data-items.zip"
 OUT_DIR = Path("./data/")
-OUT_DIR.mkdir(parents=True, exist_ok=True)
-(OUT_DIR / ".gitignore").write_text("*")
 ZIP_PATH = OUT_DIR / URL.rpartition("/")[-1]
 
 
