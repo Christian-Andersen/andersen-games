@@ -251,9 +251,10 @@ function submitGuess() {
   const house = state.houses[state.currentHouseIndex]
   const target = house.price
   const margin = target * 0.05
-  const hint = guess < target ? 'Higher ↑' : 'Lower ↓'
+  const won = Math.abs(guess - target) <= margin
+  const hint = won ? 'Correct ✓' : guess < target ? 'Higher ↑' : 'Lower ↓'
   state.guesses.unshift({ value: guess, hint })
-  if (Math.abs(guess - target) <= margin) {
+  if (won) {
     state.gameState = 'won'
   }
   state.guessInput = ''

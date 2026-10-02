@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const clicks = ref<number[]>([]);
 const cps = ref(0);
@@ -16,7 +16,11 @@ const updateCPS = () => {
 	cps.value = clicks.value.length / 5;
 };
 
-const interval = setInterval(updateCPS, 100);
+let interval: ReturnType<typeof setInterval> | undefined;
+
+onMounted(() => {
+	interval = setInterval(updateCPS, 100);
+});
 
 onUnmounted(() => clearInterval(interval));
 </script>
