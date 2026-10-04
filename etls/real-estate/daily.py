@@ -10,7 +10,7 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
-from utils import html_to_dict, value_to_dict
+from utils import html_to_dict, value_to_dict, wait_until_ready
 
 # Get information from the data folder
 data_dir = Path("data")
@@ -87,6 +87,9 @@ for webpage in webpages:
         url = webpage + "&page=" + str(i)
         print(url, end="")
         driver.get(url)
+        if not wait_until_ready(driver):
+            print("timed out")
+            continue
         property_dictionary = html_to_dict(driver.page_source)
         dupes = 0
         for value in property_dictionary.values():
@@ -111,3 +114,6 @@ for webpage in webpages:
             with ids_file.open("a", encoding="utf-8") as f:
                 f.write(prop_id + "\n")
         print(" \tDupes:", dupes)
+        if not property_dictionary:
+            # Paged past the last result, so every later page would be empty too.
+            break

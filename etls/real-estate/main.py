@@ -10,7 +10,7 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
-from utils import html_to_dict, value_to_dict
+from utils import html_to_dict, value_to_dict, wait_until_ready
 
 PAGE_SIZE_LIMIT = 20
 
@@ -107,6 +107,9 @@ while True:
     print(f"{day}/{month}/{year} : {suburb: <30} - {url}")
 
     driver.get(url)
+    if not wait_until_ready(driver):
+        print("Timed out waiting for page: " + url)
+        continue
     if "The requested URL was not found on the server." in driver.page_source:
         print("URL not found: " + url)
         msg = f"URL not found: {url}"

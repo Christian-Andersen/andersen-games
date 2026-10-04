@@ -4,8 +4,35 @@ Contains shared logic for HTML parsing and data transformation.
 """
 
 import json
+import time
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from selenium.webdriver.firefox.webdriver import WebDriver
+
+LISTINGS_KEY = '"listingsMap":'
+NO_MATCHES = "No exact matches"
+NOT_FOUND = "The requested URL was not found on the server."
+
+# A cold headless Firefox is served an Akamai interstitial that runs a behavioural
+# check and then reloads the real page, so any of these means the response is settled.
+READY_MARKERS = (LISTINGS_KEY, NO_MATCHES, NOT_FOUND)
+
+
+def wait_until_ready(driver: WebDriver, timeout: float = 60.0, poll: float = 0.5) -> bool:
+    """Block until domain.com.au stops serving its bot-check interstitial.
+
+    Reading `page_source` straight after `get()` yields the challenge page rather
+    than the listings, which parses as zero properties and silently marks suburbs
+    as finished. Returns False if the page never settles within `timeout`.
+    """
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if any(marker in driver.page_source for marker in READY_MARKERS):
+            return True
+        time.sleep(poll)
+    return False
 
 
 def add_column(group: dict[str, Any], header: str) -> str:
@@ -16,7 +43,7 @@ def add_column(group: dict[str, Any], header: str) -> str:
 
 def html_to_dict(s: str) -> dict[str, Any]:
     """Converts a domain.com.au search to a list of property information."""
-    search = '"listingsMap":'
+    search = LISTINGS_KEY
     start_index = s.find(search)
     if start_index == -1:
         return {}
@@ -50,6 +77,7 @@ def value_to_dict(value: dict[str, Any]) -> dict[str, Any]:
         price = price[1:].replace(",", "")
     data["price"] = price
 
+    data["images"] = list(value["listingModel"].get("images") or [])
     data["tagClassName"] = value["listingModel"]["tags"]["tagClassName"]
     tag_text = value["listingModel"]["tags"]["tagText"]
     data["tagText"] = tag_text
