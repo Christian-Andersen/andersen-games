@@ -13,16 +13,29 @@ function formatCurrency(value) {
   return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 }).format(value)
 }
 
-function getImageUrl(house, imageName) {
-  if (!imageName) return ''
-  if (imageName.startsWith('http')) return imageName
-  const folder = house.imageFolder || house.id
-  return `./images/${folder}/${imageName}`
+function getImageUrl(house, imagePath) {
+  if (!imagePath) return ''
+  if (imagePath.startsWith('http')) return imagePath
+  // Photos live in a shared content-addressed pool, so entries carry their shard.
+  return `./images/${imagePath}`
+}
+
+function parseSoldDate(soldDate) {
+  const [year, month, day] = String(soldDate).split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
+function daysSinceEpoch(date) {
+  return Math.floor(new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() / 86400000)
 }
 
 function getHouseForDaily() {
-  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
-  return dayOfYear % state.houses.length
+  const count = state.houses.length
+  if (count === 0) return 0
+  // Houses are sorted newest first, so today is the most recent sale and each
+  // following day walks one further back through the list, wrapping at the oldest.
+  const offset = daysSinceEpoch(new Date()) - daysSinceEpoch(parseSoldDate(state.houses[0].soldDate))
+  return ((offset % count) + count) % count
 }
 
 function startGame() {
@@ -106,39 +119,58 @@ function renderPlaying() {
               <h2 class="m-0 text-lg font-bold text-white">${house.address}</h2>
             </div>
             <div class="mb-6 rounded-xl border border-neutral-700 bg-neutral-700/50 p-5">
-              <div class="mb-4 grid grid-cols-4 gap-2.5">
-                <div class="flex flex-col items-center gap-1 text-center">
-                  <span class="text-lg">🛏️</span>
-                  <div><span class="block text-base font-extrabold text-white">${house.bedrooms}</span><span class="block text-xs uppercase text-neutral-500">Bed</span></div>
-                </div>
-                <div class="flex flex-col items-center gap-1 text-center">
-                  <span class="text-lg">🛁</span>
-                  <div><span class="block text-base font-extrabold text-white">${house.bathrooms}</span><span class="block text-xs uppercase text-neutral-500">Bath</span></div>
-                </div>
-                <div class="flex flex-col items-center gap-1 text-center">
-                  <span class="text-lg">🚗</span>
-                  <div><span class="block text-base font-extrabold text-white">${house.carSpaces}</span><span class="block text-xs uppercase text-neutral-500">Car</span></div>
-                </div>
-                <div class="flex flex-col items-center gap-1 text-center">
-                  <span class="text-lg">🏠</span>
-                  <div><span class="block text-base font-extrabold text-white">${house.buildingSize}m&sup2;</span><span class="block text-xs uppercase text-neutral-500">Build</span></div>
-                </div>
-              </div>
+              ${renderStats(house)}
               <div class="border-t border-neutral-600 pt-4 text-sm text-neutral-300">
                 <div><span class="font-semibold text-neutral-500">Land Size:</span> ${house.landSize}m&sup2;</div>
                 <div><span class="font-semibold text-neutral-500">Type:</span> ${house.type}</div>
                 <div><span class="font-semibold text-neutral-500">Sold Date:</span> ${house.soldDate}</div>
+                ${house.saleMethod ? `<div><span class="font-semibold text-neutral-500">Sold:</span> ${house.saleMethod}</div>` : ''}
+                ${renderListingLink(house)}
               </div>
             </div>
             ${state.gameState === 'playing' ? renderGuessInput() : renderResult()}
             ${state.guesses.length > 0 ? renderHistory() : ''}
-            <div class="mb-8">
-              <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-emerald-500">Description</h3>
-              <p class="whitespace-pre-line leading-relaxed text-neutral-300">${house.description.replace(/<br\s*\/?>/gi, '\n')}</p>
-            </div>
+            ${renderDescription(house)}
           </div>
         </div>
       </div>
+    </div>
+  `
+}
+
+function renderStats(house) {
+  const stats = [
+    { icon: '🛏️', value: house.bedrooms, label: 'Bed' },
+    { icon: '🛁', value: house.bathrooms, label: 'Bath' },
+    { icon: '🚗', value: house.carSpaces, label: 'Car' },
+  ]
+  // Building size is only known for listings we could read a detail page for.
+  if (house.buildingSize) stats.push({ icon: '🏠', value: `${house.buildingSize}m²`, label: 'Build' })
+
+  return `
+    <div class="mb-4 grid gap-2.5" style="grid-template-columns: repeat(${stats.length}, minmax(0, 1fr))">
+      ${stats.map((stat) => `
+        <div class="flex flex-col items-center gap-1 text-center">
+          <span class="text-lg">${stat.icon}</span>
+          <div><span class="block text-base font-extrabold text-white">${stat.value}</span><span class="block text-xs uppercase text-neutral-500">${stat.label}</span></div>
+        </div>
+      `).join('')}
+    </div>
+  `
+}
+
+function renderListingLink(house) {
+  if (!house.listingUrl) return ''
+  return `<div><span class="font-semibold text-neutral-500">Source:</span> <a href="${house.listingUrl}" target="_blank" rel="noopener noreferrer" class="cursor-pointer text-emerald-500 underline decoration-dotted underline-offset-2 hover:text-emerald-400">View on domain.com.au &nearr;</a></div>`
+}
+
+function renderDescription(house) {
+  const text = String(house.description || '').replace(/<br\s*\/?>/gi, '\n').trim()
+  if (!text) return ''
+  return `
+    <div class="mb-8">
+      <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-emerald-500">Description</h3>
+      <p class="whitespace-pre-line leading-relaxed text-neutral-300">${text}</p>
     </div>
   `
 }
@@ -277,6 +309,9 @@ function prevImage() {
 
 ;(async function init() {
   const res = await fetch('./data.json')
-  state.houses = await res.json()
+  const houses = await res.json()
+  // getHouseForDaily walks the list backwards from the newest sale, so order matters.
+  houses.sort((a, b) => parseSoldDate(b.soldDate) - parseSoldDate(a.soldDate))
+  state.houses = houses
   render()
 })()

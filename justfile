@@ -1,5 +1,5 @@
 alias c := check
-alias d := dev
+alias r := run
 
 [private]
 default:
@@ -11,13 +11,25 @@ setup:
     cd ./etls/real-estate/ && uv sync --locked
 
 build:
-    just frontend build
+    cd ./frontend && npm run build
 
 check:
     prek run --all-files
 
-dev:
-    just frontend dev
+# Dev server for the dashboard and the standalone games in frontend/games/
+run:
+    cd ./frontend && npm run dev
+
+# Scrape newly sold Domain listings into etls/real-estate/data/
+scrape:
+    cd ./etls/real-estate/ && uv run python daily.py
+
+# Rebuild the guesser's data.json and photos from whatever has been scraped
+game-data:
+    cd ./etls/real-estate/ && uv run python export.py
+
+# Scrape then rebuild, which is what keeps the daily challenge current
+refresh-game: scrape game-data
 
 audit:
     prek run --all-files audit

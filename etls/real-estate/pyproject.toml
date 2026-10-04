@@ -8,6 +8,7 @@ dependencies = [
   "pandas>=3.0.0",
   "selenium>=4.0.0",
   "scikit-learn>=1.0.0",
+  "pillow>=12.3.0",
 ]
 
 [dependency-groups]
