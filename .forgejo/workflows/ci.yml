@@ -18,11 +18,18 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Set up uv
         uses: astral-sh/setup-uv@v6
-      # Pin v2: v3+ are composite actions that delegate to
-      # extractions/setup-crate, which is not mirrored on data.forgejo.org, so
-      # the runner fails to resolve it. v2 is a self-contained Node action.
+      # v2: v3+ delegate to setup-crate, which is not mirrored on
+      # data.forgejo.org. Forgejo also exports its own token as GITHUB_TOKEN,
+      # which this action would send to api.github.com and get "Bad
+      # credentials"; blank it so release lookups are unauthenticated. Pin the
+      # version so only one release page is fetched and results are repeatable.
       - name: Set up Just
         uses: extractions/setup-just@v2
+        env:
+          GITHUB_TOKEN: ""
+        with:
+          github-token: ""
+          just-version: "1.59.0"
       - name: Install prek
         run: uv tool install prek
       - name: Run CI
