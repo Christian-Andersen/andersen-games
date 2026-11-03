@@ -26,7 +26,7 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
       - name: Install prek
-        run: uv tool install prek
+        run: env UV_TOOL_BIN_DIR=/usr/local/bin uv tool install prek
       - name: Run CI
         run: just ci
   build-and-deploy:
